@@ -9,6 +9,7 @@ import hmac
 import io
 import json
 import os
+import re
 import secrets
 import sqlite3
 import threading
@@ -212,8 +213,10 @@ class Handler(BaseHTTPRequestHandler):
                 if method == "POST" and path in ("/api/login", "/api/register"):
                     data = self.body()
                     username, password = data.get("username", ""), data.get("password", "")
-                    if not isinstance(username, str) or not isinstance(password, str) or len(username) > 40 or len(password) > 200:
-                        raise ApiError(400, "帳號或密碼格式不正確。")
+                    if not isinstance(username, str) or not 1 <= len(username.strip()) <= 40:
+                        raise ApiError(400, "帳號需填寫 1–40 個字元。")
+                    if not isinstance(password, str) or not 1 <= len(password) <= 200:
+                        raise ApiError(400, "密碼需填寫 1–200 個字元。")
                     username = username.strip().lower()
                     ip = self.client_address[0]
                     with ATTEMPTS_LOCK:
@@ -224,13 +227,19 @@ class Handler(BaseHTTPRequestHandler):
                             raise ApiError(429, "嘗試次數過多，請五分鐘後再試。")
                     if path == "/api/register":
                         name = data.get("name", "")
-                        if not isinstance(name, str) or not 1 <= len(name.strip()) <= 30 or not 3 <= len(username) <= 40 or not username.isascii() or not all(c.isalnum() or c in "_-" for c in username) or len(password) < 8:
-                            raise ApiError(400, "姓名限 1–30 字；帳號需 3–40 位英數、底線或連字號；密碼至少 8 字。")
+                        if not isinstance(name, str) or not 1 <= len(name.strip()) <= 30:
+                            raise ApiError(400, "姓名需填寫 1–30 個字，可以使用中文。")
+                        simple_account = re.fullmatch(r"[a-z0-9_-]+", username)
+                        email_account = re.fullmatch(r"[a-z0-9._%+-]+@[a-z0-9-]+(?:\.[a-z0-9-]+)+", username)
+                        if not 3 <= len(username) <= 40 or not (simple_account or email_account):
+                            raise ApiError(400, "帳號需 3–40 個半形英數、底線、連字號，或使用電子郵件地址。")
+                        if len(password) < 8:
+                            raise ApiError(400, "建立帳號的密碼至少需要 8 個字元，不要求特定符號。")
                         try:
                             # Registration always creates authors; clients cannot assign editor privileges.
                             db.execute("INSERT INTO users VALUES(?,?,?,?,?)", (secrets.token_hex(12), username, name.strip(), password_hash(password), "author"))
                         except sqlite3.IntegrityError:
-                            raise ApiError(409, "這個帳號已被使用。")
+                            raise ApiError(409, "這個帳號已被使用；若是你建立的帳號，請切換到登入。")
                     row = db.execute("SELECT * FROM users WHERE username=?", (username,)).fetchone()
                     dummy = "0" * 32 + ":" + "0" * 64
                     valid = verify_password(password, row["password_hash"] if row else dummy)
