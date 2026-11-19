@@ -4,8 +4,7 @@
 <body>
 <div id="demo-banner" hidden>線上體驗版：模擬帳號，資料只存於本瀏覽器。真正的登入、權限與 SQLite 資料庫請使用下載版。</div>
 <section id="login-screen" class="login-screen">
- <div class="login-story"><div class="brand"><span>投稿審查系統</span></div><div><div class="eyebrow">MANUSCRIPT WORKSPACE</div><h1>讓每個想法，<br>有被讀見的機會。</h1><p>從第一行草稿，到最後一次審查。<br>作者撰寫稿件，編輯進行審查。</p><div class="story-line"></div><div class="story-bottom">撰寫稿件 <span>／</span> 提交審查 <span>／</span> 通過刊登</div></div><footer>1151 期中個人專題 · 投稿審查系統</footer></div>
- <div class="login-form-wrap"><div class="login-form"><h2 id="auth-heading">歡迎回來</h2><p class="muted" id="auth-description">登入後，接著完成你的下一篇作品。</p>
+ <div class="login-form-wrap"><div class="login-form"><h1 class="login-system-title">投稿審查系統</h1><h2 id="auth-heading">登入</h2><p class="muted" id="auth-description" hidden></p>
  <form id="auth-form" novalidate>
   <div id="name-field" hidden><label for="auth-name">姓名</label><input id="auth-name" maxlength="30" placeholder="你的顯示名稱，可以使用中文" autocomplete="name"></div>
   <label for="auth-username">帳號（可用電子郵件）</label><input id="auth-username" required maxlength="40" placeholder="例如 student01 或 name@example.com" autocomplete="username" autocapitalize="none" spellcheck="false" aria-describedby="username-hint auth-error"><small id="username-hint" class="field-hint">請輸入註冊時的帳號；中文姓名不是登入帳號。</small>

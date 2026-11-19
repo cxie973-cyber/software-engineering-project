@@ -5,3 +5,6 @@
 .password-field{position:relative}.login-form .password-field input{padding-right:65px}
 .password-show{position:absolute;right:5px;top:50%;transform:translateY(-50%);padding:6px 10px;border:0;background:transparent;font-size:11px;color:var(--green)}
 .login-form input[aria-invalid="true"]{border-color:#b04336;outline-color:#b04336}
+
+/* Simple login page without the promotional panel. */
+.login-screen{grid-template-columns:1fr}.login-form-wrap{width:100%;max-width:470px;padding:36px 28px;margin:auto}.login-system-title{font-family:inherit;font-size:24px;font-weight:600;line-height:1.4;margin:0 0 24px;letter-spacing:0}.login-form h2{font-family:inherit;font-size:21px;font-weight:500;line-height:1.4;margin:0 0 22px}
